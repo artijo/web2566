@@ -187,11 +187,15 @@ class App extends React.Component {
 
     deleteData(e, id){
         e.preventDefault();
+        if(confirm("Are you sure to delete?")){
         db.collection("students").doc(id).delete().then(() => {
             console.log("Document successfully deleted!");
         }).catch((error) => {
             console.error("Error removing document: ", error);
         });
+    }else{
+        console.log("Cancel");
+        }
     }
 }
 
