@@ -37,6 +37,11 @@ class App extends React.Component {
     state = {
         scene: 0,
         students:[],
+        stdid: "",
+        stdtitle: "",
+        stdfname: "",
+        stdlname: "",
+        stdemail: "",
     }      
     render() {
       return (
@@ -45,8 +50,67 @@ class App extends React.Component {
           <RB.Card.Body>
             <RB.Button variant="primary" onClick={() => this.readData()}>Read Data</RB.Button>
             <RB.Button variant="success" onClick={() => this.autoRead()}>Auto Read Data</RB.Button>
-            <this.showData data={this.state.students} />
+            {/* <this.showData data={this.state.students} /> */}
+            <RB.Table striped bordered hover>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Name</th>
+                    <th>Lastname</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {this.state.students.map((std, index) => (
+                    <tr>
+                        <td>{index + 1}</td>
+                        <td>{std.id}</td>
+                        <td>{std.title}</td>
+                        <td>{std.fname}</td>
+                        <td>{std.lname}</td>
+                        <td>{std.email}</td>
+                        <td>
+                        <RB.Button variant="danger" onClick={(e) => this.deleteData(e, std.id)}>Delete</RB.Button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </RB.Table>
           </RB.Card.Body>
+          <RB.Card>
+            <RB.Card.Header>Insert Data</RB.Card.Header>
+            <RB.Card.Body>
+              <RB.Form>
+              <RB.Form.Group controlId="formBasicText">
+                  <RB.Form.Label>ID</RB.Form.Label>
+                  <RB.Form.Control type="text" placeholder="Enter Student ID" onChange={(e) => this.setState({ stdid: e.target.value })}  />
+                  <span>id: {this.state.stdid}</span>
+                </RB.Form.Group>
+                <RB.Form.Group controlId="formBasicText">
+                  <RB.Form.Label>Title</RB.Form.Label>
+                  <RB.Form.Control type="text" placeholder="Enter First Name" onChange={(e) => this.setState({ stdtitle: e.target.value })} />
+                </RB.Form.Group>
+                <RB.Form.Group controlId="formBasicText">
+                  <RB.Form.Label>First Name</RB.Form.Label>
+                  <RB.Form.Control type="text" placeholder="Enter First Name" onChange={(e) => this.setState({ stdfname: e.target.value })} />
+                </RB.Form.Group>
+                <RB.Form.Group controlId="formBasicText">
+                  <RB.Form.Label>Last Name</RB.Form.Label>
+                  <RB.Form.Control type="text" placeholder="Enter Last Name" onChange={(e) => this.setState({ stdlname: e.target.value })} />
+                </RB.Form.Group>
+                <RB.Form.Group controlId="formBasicEmail">
+                  <RB.Form.Label>Email</RB.Form.Label>
+                  <RB.Form.Control type="email" placeholder="Enter Email" onChange={(e) => this.setState({ stdemail: e.target.value })} />
+                </RB.Form.Group>
+                <RB.Button variant="primary" type="submit" onClick={(e)=>this.handlesubmit(e)}>
+                  Submit
+                </RB.Button>
+              </RB.Form>
+            </RB.Card.Body>
+          </RB.Card>
           <RB.Card.Footer>{this.footer}</RB.Card.Footer>
         </RB.Card>          
       );
@@ -72,31 +136,60 @@ class App extends React.Component {
         });
     }
 
-    showData({data}){
-        return (
-            <RB.Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {data.map((std, index) => (
-                    <tr>
-                        <td>{index + 1}</td>
-                        <td>{std.id}</td>
-                        <td>{std.fname}</td>
-                        <td>{std.lname}</td>
-                        <td>{std.email}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </RB.Table>
-        );
+    // showData({data}){
+    //     return (
+    //         <RB.Table striped bordered hover>
+    //         <thead>
+    //             <tr>
+    //                 <th>#</th>
+    //                 <th>ID</th>
+    //                 <th>Name</th>
+    //                 <th>Lastname</th>
+    //                 <th>Email</th>
+    //                 <th>Action</th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>
+    //             {data.map((std, index) => (
+    //                 <tr>
+    //                     <td>{index + 1}</td>
+    //                     <td>{std.id}</td>
+    //                     <td>{std.fname}</td>
+    //                     <td>{std.lname}</td>
+    //                     <td>{std.email}</td>
+    //                     <td>
+    //                     <RB.Button variant="danger" onClick={(e) => this.deleteData(e, std.id)}>Delete</RB.Button>
+    //                     </td>
+    //                 </tr>
+    //             ))}
+    //         </tbody>
+    //     </RB.Table>
+    //     );
+    // }
+
+    handlesubmit(e){
+        e.preventDefault();
+        db.collection("students").doc(this.state.stdid).set({
+            title: this.state.stdtitle,
+            fname: this.state.stdfname,
+            lname: this.state.stdlname,
+            email: this.state.stdemail
+        }).then(() => {
+            console.log("Document successfully written!");
+            this.setState({stdid: "", stdtitle: "", stdfname: "", stdlname: "", stdemail: ""});
+        }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+        
+    }
+
+    deleteData(e, id){
+        e.preventDefault();
+        db.collection("students").doc(id).delete().then(() => {
+            console.log("Document successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
     }
 }
 
