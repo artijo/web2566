@@ -42,6 +42,7 @@ class App extends React.Component {
         stdfname: "",
         stdlname: "",
         stdemail: "",
+        isupdate: false
     }      
     render() {
       return (
@@ -73,6 +74,7 @@ class App extends React.Component {
                         <td>{std.lname}</td>
                         <td>{std.email}</td>
                         <td>
+                        <RB.Button variant="warning" onClick={(e) => this.setState({stdid: std.id, stdtitle: std.title, stdfname: std.fname, stdlname: std.lname, stdemail: std.email, isupdate:true})}>Edit</RB.Button>
                         <RB.Button variant="danger" onClick={(e) => this.deleteData(e, std.id)}>Delete</RB.Button>
                         </td>
                     </tr>
@@ -81,32 +83,32 @@ class App extends React.Component {
         </RB.Table>
           </RB.Card.Body>
           <RB.Card>
-            <RB.Card.Header>Insert Data</RB.Card.Header>
+            <RB.Card.Header>Insert/Update Data</RB.Card.Header>
             <RB.Card.Body>
               <RB.Form>
               <RB.Form.Group controlId="formBasicText">
                   <RB.Form.Label>ID</RB.Form.Label>
-                  <RB.Form.Control type="text" placeholder="Enter Student ID" onChange={(e) => this.setState({ stdid: e.target.value })}  />
+                  <RB.Form.Control type="text" placeholder="Enter Student ID" value={this.state.stdid} onChange={(e) => this.setState({ stdid: e.target.value })} readOnly={this.state.isupdate == true}  />
                   <span>id: {this.state.stdid}</span>
                 </RB.Form.Group>
                 <RB.Form.Group controlId="formBasicText">
                   <RB.Form.Label>Title</RB.Form.Label>
-                  <RB.Form.Control type="text" placeholder="Enter First Name" onChange={(e) => this.setState({ stdtitle: e.target.value })} />
+                  <RB.Form.Control type="text" placeholder="Enter First Name" value={this.state.stdtitle} onChange={(e) => this.setState({ stdtitle: e.target.value })} />
                 </RB.Form.Group>
                 <RB.Form.Group controlId="formBasicText">
                   <RB.Form.Label>First Name</RB.Form.Label>
-                  <RB.Form.Control type="text" placeholder="Enter First Name" onChange={(e) => this.setState({ stdfname: e.target.value })} />
+                  <RB.Form.Control type="text" placeholder="Enter First Name" value={this.state.stdfname} onChange={(e) => this.setState({ stdfname: e.target.value })} />
                 </RB.Form.Group>
                 <RB.Form.Group controlId="formBasicText">
                   <RB.Form.Label>Last Name</RB.Form.Label>
-                  <RB.Form.Control type="text" placeholder="Enter Last Name" onChange={(e) => this.setState({ stdlname: e.target.value })} />
+                  <RB.Form.Control type="text" placeholder="Enter Last Name" value={this.state.stdlname} onChange={(e) => this.setState({ stdlname: e.target.value })} />
                 </RB.Form.Group>
                 <RB.Form.Group controlId="formBasicEmail">
                   <RB.Form.Label>Email</RB.Form.Label>
-                  <RB.Form.Control type="email" placeholder="Enter Email" onChange={(e) => this.setState({ stdemail: e.target.value })} />
+                  <RB.Form.Control type="email" placeholder="Enter Email" value={this.state.stdemail} onChange={(e) => this.setState({ stdemail: e.target.value })} />
                 </RB.Form.Group>
                 <RB.Button variant="primary" type="submit" onClick={(e)=>this.handlesubmit(e)}>
-                  Submit
+                  Submit/Update
                 </RB.Button>
               </RB.Form>
             </RB.Card.Body>
@@ -176,7 +178,7 @@ class App extends React.Component {
             email: this.state.stdemail
         }).then(() => {
             console.log("Document successfully written!");
-            this.setState({stdid: "", stdtitle: "", stdfname: "", stdlname: "", stdemail: ""});
+            this.setState({stdid: "", stdtitle: "", stdfname: "", stdlname: "", stdemail: "", isupdate: false});
         }).catch((error) => {
             console.error("Error writing document: ", error);
         });
