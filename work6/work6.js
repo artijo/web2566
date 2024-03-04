@@ -42,13 +42,31 @@ class App extends React.Component {
         stdfname: "",
         stdlname: "",
         stdemail: "",
-        isupdate: false
+        isupdate: false,
+        user: null
     }      
     render() {
+      firebase.auth().onAuthStateChanged((user)=>{
+        if (user) {
+          this.state.user = user.toJSON();
+        }else{
+          this.state.user = null;
+       }
+     });
       return (
         <RB.Card>
           <RB.Card.Header>{this.title}</RB.Card.Header>  
           <RB.Card.Body>
+            {/* <RB.Button variant="primary" onClick={() => this.google_login()}>Login</RB.Button>
+            {this.user ? (
+              <>
+              <div>
+                <img src={this.user.photoURL} width="50" />
+                <span>{this.user.displayName}</span>
+              </div>
+              <RB.Button variant="danger" onClick={() => this.google_logout()}>Logout</RB.Button>
+              </>
+            ) : null} */}
             <RB.Button variant="primary" onClick={() => this.readData()}>Read Data</RB.Button>
             <RB.Button variant="success" onClick={() => this.autoRead()}>Auto Read Data</RB.Button>
             {/* <this.showData data={this.state.students} /> */}
@@ -197,6 +215,28 @@ class App extends React.Component {
         console.log("Cancel");
         }
     }
+  //   mounted() {
+  //     firebase.auth().onAuthStateChanged((user)=>{
+  //        if (user) {
+  //          this.user = user.toJSON();
+  //        }else{
+  //          this.user = null;
+  //       }
+  //     });
+  // }
+
+  google_login() {
+    // Using a popup.
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope("profile");
+    provider.addScope("email");
+    firebase.auth().signInWithPopup(provider)
+  }
+  google_logout(){
+    if(confirm("Are you sure?")){
+      firebase.auth().signOut();
+    }
+  }
 }
 
 
